@@ -68,8 +68,6 @@ Suggestions for Future Features
 - Graphical dashboards with charts
 - Export full database as SQL
 
-License
-This project is licensed under the MIT License.
 
 Author
 
