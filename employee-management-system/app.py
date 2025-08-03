@@ -7,8 +7,7 @@ import time
 from datetime import timedelta
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Replace with a secure value
-app.permanent_session_lifetime = timedelta(minutes=5)
+
 
 # CONFIG: MySQL credentials (for limited-access user)
 DB_HOST = 'localhost'
@@ -303,3 +302,4 @@ def get_remaining_time():
 
 if __name__ == "__main__":
     app.run()
+
