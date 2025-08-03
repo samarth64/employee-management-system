@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Table</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Select a table in database: <code>{{ database }}</code></h2>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <ul>
+      {% for table in tables %}
+        <li>
+          <a href="{{ url_for('view_table', database=database, table=table) }}">{{ table }}</a>
+          <form method="post" action="{{ url_for('delete_table', database=database, table=table) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete table {{ table }}?');">
+            <button type="submit" style="margin-left: 10px; color: rgb(255, 255, 255);">Delete</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+    <hr>
+
+    <h3>Create a New Table</h3>
+    <form method="post" action="{{ url_for('create_table', database=database) }}">
+      <label>Table Name:
+        <input type="text" name="table_name" required>
+      </label>
+
+      <div id="columns">
+        <h4>Columns</h4>
+        <div class="column">
+          <input type="text" name="column_name[]" placeholder="Column Name" required>
+          <select name="data_type[]">
+            <option value="VARCHAR(255)">Text</option>
+            <option value="INT">Integer</option>
+            <option value="FLOAT">Decimal</option>
+            <option value="DATE">Date</option>
+          </select>
+          <label><input type="checkbox" name="primary_key[]" value="col0"> Primary Key</label>
+          <label><input type="checkbox" name="not_null[]" value="col0"> Not Null</label>
+        </div>
+      </div>
+
+      <button type="button" onclick="addColumn()">Add Column</button>
+      <button type="submit">Create Table</button>
+    </form>
+    
+    <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
+  </div>
+  
+  <script>
+    let colCount = 1;
+    function addColumn() {
+      const container = document.getElementById('columns');
+      const div = document.createElement('div');
+      div.classList.add('column');
+      div.innerHTML = `
+        <input type="text" name="column_name[]" placeholder="Column Name" required>
+        <select name="data_type[]">
+          <option value="VARCHAR(255)">Text</option>
+          <option value="INT">Integer</option>
+          <option value="FLOAT">Decimal</option>
+          <option value="DATE">Date</option>
+        </select>
+        <label><input type="checkbox" name="primary_key[]" value="col${colCount}"> Primary Key</label>
+        <label><input type="checkbox" name="not_null[]" value="col${colCount}"> Not Null</label>
+      `;
+      container.appendChild(div);
+      colCount++;
+    }
+  </script>
+</body>
+</html>

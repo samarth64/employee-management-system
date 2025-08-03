@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Table - {{ table }}</title>
+    <meta name="description" content="View and manage rows in your selected employee table.">
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="/assets/images/favicon-16x16.png">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('select_table', database=database) }}" class="nav-btn">← Back</a>
+        <h1>{{ table }} Table</h1>
+        
+
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="flash {{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h2>Insert New Row</h2>
+        <form action="/insert/{{ database }}/{{ table }}" method="POST" class="grid-form">
+            {% for col in columns %}
+                <label>{{ col }}:</label>
+                <input type="text" name="{{ col }}" required>
+            {% endfor %}
+            <button type="submit">Insert</button>
+        </form>
+
+        <div class="csv-controls">
+            <form action="/import_csv/{{ database }}/{{ table }}" method="POST" enctype="multipart/form-data">
+                <label>Import from CSV:</label>
+                <input type="file" name="csv_file" accept=".csv" required>
+                <button type="submit">Upload</button>
+            </form>
+            <a href="/export_csv/{{ database }}/{{ table }}" class="btn">Export CSV</a>
+            <a href="/download_sample/{{ database }}/{{ table }}" class="btn">Download Sample</a>
+        </div>
+
+        <h2>Table Records</h2>
+        <table>
+            <thead>
+                <tr>
+                    {% for col in columns %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        {% for value in row %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                        <td>
+                            <form action="/delete_row/{{ database }}/{{ table }}/{{ row[0] }}" method="POST">
+                                <button class="danger-btn">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="{{ columns|length + 1 }}">No data available.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</body>
+</html>

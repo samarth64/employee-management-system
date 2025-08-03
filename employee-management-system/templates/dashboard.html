@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Smart Employee Database Manager</title>
+    <meta name="description" content="Create and manage employee databases and tables easily without needing MySQL knowledge.">
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="/assets/images/favicon-16x16.png">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="nav-btn">← Home</a>
+        <h1>Database Dashboard</h1>
+        
+
+    </nav>
+
+    <div class="container">
+        <form action="/create_database" method="POST" class="form-inline">
+            <label>Create new database: </label>
+            <input type="text" name="dbname" placeholder="Enter name (e.g., testdb)" required>
+            <button type="submit">Create</button>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="flash {{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h2>Available Databases</h2>
+        <ul class="list">
+            {% for db in databases %}
+                <li>
+                    <strong>{{ db }}</strong>
+                    <form action="/delete_database/{{ db }}" method="POST" style="display:inline;">
+                        <button type="submit" class="danger-btn">Delete</button>
+                    </form>
+                    <a href="/select/{{ db }}" class="btn">Manage</a>
+                </li>
+            {% else %}
+                <p>No databases found.</p>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>
